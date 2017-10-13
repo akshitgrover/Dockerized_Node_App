@@ -2,4 +2,9 @@ version: '3'
 services:
   node:
     build: .
-    
+    ports:
+      - 80:3000
+  mongo:
+    image: mongo:latest
+    ports:
+      - 27017:27017

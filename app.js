@@ -22,25 +22,26 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+var db = require('mongoose');
+db.connect('mongodb://mongo/node_app',function(err,data){
+	if(err){
+		console.log(err);
+	}
+	else{
+		console.log('connected');
+	}
+});
+var schema = db.Schema;
+var flag = new schema({
+	test:{
+		type:'string'
+	}
+});
+var model = db.model('f',flag);
+
 app.use('/', index);
 app.use('/users', users);
 app.use('/test', function(req,res,next){
-	var db = require('mongoose');
-	db.connect('mongodb://mongo/node_app',function(err,data){
-		if(err){
-			console.log(err);
-		}
-		else{
-			console.log('connected');
-		}
-	});
-	var schema = db.Schema;
-	var flag = new schema({
-		test:{
-			type:'string'
-		}
-	});
-	var model = db.model('f',flag);
 	model.create({test:"Hello World"},function(err,data){
 		if(err){
 			res.send(err);
