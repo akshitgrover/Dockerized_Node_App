@@ -4,7 +4,7 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-
+const db = require('mongoose');
 var index = require('./routes/index');
 var users = require('./routes/users');
 
@@ -24,6 +24,32 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);
 app.use('/users', users);
+app.use('/test', function(req,res,next){
+	var db = require('mongoose');
+	db.connect('mongodb://mongo/node_app',function(err,data){
+		if(err){
+			console.log(err);
+		}
+		else{
+			console.log('connected');
+		}
+	});
+	var schema = db.Schema;
+	var flag = new schema({
+		test:{
+			type:'string'
+		}
+	});
+	var model = db.model('f',flag);
+	model.create({test:"Hello World"},function(err,data){
+		if(err){
+			res.send(err);
+		}
+		else{
+			res.send("Inserted");
+		}
+	}); 
+});
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
